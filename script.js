@@ -19,34 +19,43 @@ function complete() {
   }
 }
 
-// Get Quote From API
+const proxyUrl = 'https://api.allorigins.win/get?url=';
+const apiUrl = 'http://localhost:3000/api/quote';
+
 async function getQuote() {
-  loading();
-  // We need to use a Proxy URL to make our API call in order to avoid a CORS error
-  const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-  const apiUrl = 'https://api.forismatic.com/api/1.0/?method=getQuote&lang=en&format=json';
   try {
-    const response = await fetch(proxyUrl + apiUrl);
+    loading();
+
+    const response = await fetch(apiUrl);
     const data = await response.json();
-    // Check if Author field is blank and replace it with 'Unknown'
-    if (data.quoteAuthor === '') {
+
+    const quoteData = data[0]; // Assuming ZenQuotes API returns an array
+
+    if (!quoteData.a) {
       authorText.innerText = 'Unknown';
     } else {
-      authorText.innerText = data.quoteAuthor;
+      authorText.innerText = quoteData.a;
     }
-    // Dynamically reduce font size for long quotes
-    if (data.quoteText.length > 120) {
+
+    if (quoteData.q.length > 120) {
       quoteText.classList.add('long-quote');
     } else {
       quoteText.classList.remove('long-quote');
     }
-    quoteText.innerText = data.quoteText;
-    // Stop Loading, Show Quote
+
+    quoteText.innerText = quoteData.q;
     complete();
   } catch (error) {
-    getQuote();
+    console.error('Error fetching quote:', error);
+    quoteText.innerText = 'Failed to fetch a new quote. Please try again later.';
+    complete();
   }
 }
+
+
+
+// Get Quote From API
+
 
 // Tweet Quote
 function tweetQuote() {
@@ -57,8 +66,13 @@ function tweetQuote() {
 }
 
 // Event Listeners
-newQuoteBtn.addEventListener('click', getQuote);
-twitterBtn.addEventListener('click', tweetQuote);
+document.addEventListener('DOMContentLoaded', () => {
+  newQuoteBtn.addEventListener('click', () => {
+    console.log('New Quote button clicked');
+    getQuote();
+  });
+  twitterBtn.addEventListener('click', tweetQuote);
+});
 
 // On Load
 getQuote();
