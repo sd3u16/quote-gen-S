@@ -24,7 +24,7 @@ async function getQuote() {
   loading();
   // We need to use a Proxy URL to make our API call in order to avoid a CORS error
   const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-  const apiUrl = 'https://jacintodesign.github.io/quotes-api/data/quotes.json';
+  const apiUrl = 'https://api.forismatic.com/api/1.0/?method=getQuote&lang=en&format=json';
   try {
     const response = await fetch(proxyUrl + apiUrl);
     const data = await response.json();
@@ -60,3 +60,5 @@ function tweetQuote() {
 newQuoteBtn.addEventListener('click', getQuote);
 twitterBtn.addEventListener('click', tweetQuote);
 
+// On Load
+getQuote();
