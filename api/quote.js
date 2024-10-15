@@ -1,3 +1,4 @@
+// Select DOM elements
 const quoteContainer = document.getElementById('quote-container');
 const quoteText = document.getElementById('quote');
 const authorText = document.getElementById('author');
@@ -19,30 +20,34 @@ function complete() {
   }
 }
 
-const proxyUrl = 'https://api.allorigins.win/get?url=';
-const apiUrl = 'http://localhost:3000/api/quote';
+// API URL for fetching the quote
+const apiUrl = '/api/quote';  // Use relative path for the internal Vercel API
 
+// Get Quote From API
 async function getQuote() {
   try {
     loading();
 
-    const response = await fetch(apiUrl);
+    const response = await fetch(apiUrl);  // Fetch from the internal API route
     const data = await response.json();
 
-    const quoteData = data[0]; // Assuming ZenQuotes API returns an array
+    const quoteData = data[0]; // Assuming the API returns an array of quotes
 
+    // Check if Author field is blank and replace it with 'Unknown'
     if (!quoteData.a) {
       authorText.innerText = 'Unknown';
     } else {
       authorText.innerText = quoteData.a;
     }
 
+    // Dynamically reduce font size for long quotes
     if (quoteData.q.length > 120) {
       quoteText.classList.add('long-quote');
     } else {
       quoteText.classList.remove('long-quote');
     }
 
+    // Set the quote text
     quoteText.innerText = quoteData.q;
     complete();
   } catch (error) {
@@ -51,11 +56,6 @@ async function getQuote() {
     complete();
   }
 }
-
-
-
-// Get Quote From API
-
 
 // Tweet Quote
 function tweetQuote() {
@@ -76,3 +76,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // On Load
 getQuote();
+
