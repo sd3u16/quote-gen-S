@@ -50,7 +50,6 @@ body {
   margin-top: 15px;
   display: flex;
   justify-content: space-between;
-  z-index: 10;
 }
 
 button {
@@ -91,8 +90,6 @@ button:active {
   width: 120px;
   height: 120px;
   animation: spin 2s linear infinite;
-  background-color: rgba(0, 0, 0, 0.5); /* For debugging */
-  z-index: 1; /* Set the z-index lower if needed */
 }
 
 @keyframes spin {
