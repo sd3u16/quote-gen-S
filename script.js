@@ -22,29 +22,44 @@ function complete() {
 // Get Quote From API
 async function getQuote() {
   loading();
-  // We need to use a Proxy URL to make our API call in order to avoid a CORS error
-  const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-  const apiUrl = 'https://api.forismatic.com/api/1.0/?method=getQuote&lang=en&format=json';
+  const apiKey = '0GqmozvnJmQB2tb6/rwkxw==hrW7u16tWthDYbfd'; // Replace with your API key
+  const category = 'happiness'; // You can change this to another category if needed
+  const apiUrl = `https://api.api-ninjas.com/v1/quotes?category=${category}`;
   try {
-    const response = await fetch(proxyUrl + apiUrl);
+    const response = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'X-Api-Key': apiKey
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Error fetching quote');
+    }
+
     const data = await response.json();
+    const quoteData = data[0]; // Assuming the API returns an array with one object
+
     // Check if Author field is blank and replace it with 'Unknown'
-    if (data.quoteAuthor === '') {
+    if (quoteData.author === '') {
       authorText.innerText = 'Unknown';
     } else {
-      authorText.innerText = data.quoteAuthor;
+      authorText.innerText = quoteData.author;
     }
+
     // Dynamically reduce font size for long quotes
-    if (data.quoteText.length > 120) {
+    if (quoteData.quote.length > 120) {
       quoteText.classList.add('long-quote');
     } else {
       quoteText.classList.remove('long-quote');
     }
-    quoteText.innerText = data.quoteText;
+
+    quoteText.innerText = quoteData.quote;
     // Stop Loading, Show Quote
     complete();
   } catch (error) {
-    getQuote();
+    console.error('There was a problem fetching the quote:', error);
+    getQuote(); // Retry on error
   }
 }
 
